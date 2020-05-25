@@ -5,7 +5,10 @@
  */
 module.exports = app => {
   const { router, controller } = app;
+
   router.get('/', controller.home.index)
 
-  router.post('/auth', controller.auth.index)
+  router.get('/getTimeOptions', controller.home.getTimeOptions)
+
+  router.get('/auth', controller.auth.index)
 };
