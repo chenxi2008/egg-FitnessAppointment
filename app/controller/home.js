@@ -4,18 +4,9 @@ const Controller = require('egg').Controller;
 
 class HomeController extends Controller {
   async index() {
-    const { ctx } = this;
-    ctx.body = 'hi, egg';
-
-    /**
-		[lable：
-		value:
-		children: [
-			lable:
-			value:
-			children:
-		]]
-    **/
+    const { ctx, app } = this;
+    let res = await app.mysql.query('select * from equipment');
+    ctx.body = res
   }
   async getTimeOptions() {
   	const { ctx } = this;

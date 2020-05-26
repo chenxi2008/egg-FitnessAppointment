@@ -17,7 +17,25 @@ module.exports = appInfo => {
 
   // add your middleware config here
   config.middleware = [];
-
+  // 单数据库信息配置
+  config.mysql = {
+    client: {
+      // host
+      host: 'cdb-jiex74ug.bj.tencentcdb.com',
+      // 端口号
+      port: '10084 ',
+      // 用户名
+      user: 'root',
+      // 密码
+      password: 'Cx630889',
+      // 数据库名
+      database: 'sunshine',
+    },
+    // 是否加载到 app 上，默认开启
+    app: true,
+    // 是否加载到 agent 上，默认关闭
+    agent: false,
+  }
   // add your user config here
   const userConfig = {
     myAppName: 'egg',
@@ -33,4 +51,24 @@ module.exports = appInfo => {
     ...userConfig,
     ...miniProgram
   };
+};
+
+exports.mysql = {
+  // 单数据库信息配置
+  client: {
+    // host
+    host: 'cdb-jiex74ug.bj.tencentcdb.com',
+    // 端口号
+    port: '10084 ',
+    // 用户名
+    user: 'root',
+    // 密码
+    password: 'Cx630889',
+    // 数据库名
+    database: 'sunshine',
+  },
+  // 是否加载到 app 上，默认开启
+  app: true,
+  // 是否加载到 agent 上，默认关闭
+  agent: false,
 };

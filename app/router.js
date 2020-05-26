@@ -11,4 +11,6 @@ module.exports = app => {
   router.get('/getTimeOptions', controller.home.getTimeOptions)
 
   router.get('/auth', controller.auth.index)
+
+  router.get('/user/update', controller.user.update)
 };

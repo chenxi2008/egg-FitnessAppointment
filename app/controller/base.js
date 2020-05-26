@@ -11,7 +11,7 @@ class Base extends Controller {
 	}
 	faile(o) {
 		this.ctx.body = {
-			code: o.code ? o.code : 500,
+			code: o.code ? o.code : 400,
 			data: o.data ? o.data : {},
 			msg: o.msg ? o.msg : '失败'
 		}
@@ -24,16 +24,16 @@ class Base extends Controller {
 	render(o) {
 		this.ctx.body = {
 			data: o.data ? o.data : {},
-			code: o.code 
-				? o.code 
-				: (o.type === 'fail' ? 500 : 200),
+			code: o.code
+				? o.code
+				: (o.type === 'fail' ? 400 : 200),
 			msg: o.msg 
-				? o.msg 
+				? o.msg
 				: (o.type === 'fail' ? '失败' : '成功')
 		}
 	}
 	getUserInfo() {
-		
+
 	}
 	getSomeThing() {
 
