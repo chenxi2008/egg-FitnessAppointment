@@ -30,15 +30,26 @@ class AuthController extends BaseController {
 		)
 
 		if (data && data.openid) {
-			let INSERT = `INSERT INTO user (openid) values ('${data.openid}')`
+			let query = `
+				INSERT INTO
+					user (openid) SELECT ('${data.openid}')
+				FROM DUAL
+				WHERE NOT EXISTS
+					(SELECT openid FROM user WHERE openid='${data.openid}')
+			`
 			try {
-				await app.mysql.query(INSERT)
+				let res = await app.mysql.query(query)
+				console.log(res)
+				// if (res.length == 0) {
+				// 	await app.mysql.query(INSERT)
+				// }
 			} catch (e) {
 				this.error = e
+				console.log(e)
 			}
 			this.render({
 				type: this.error ?
-					'success' : 'fail',
+					'fail' : 'success',
 				msg: this.error,
 				data: {openid: data.openid}
 			})

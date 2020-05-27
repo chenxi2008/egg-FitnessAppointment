@@ -3,22 +3,29 @@
 const BaseController = require('./base');
 
 class UserController extends BaseController {
-	async update() {
+	async updateUserinfo() {
 		let { ctx, app } = this
 		let { openid, userinfo } = ctx.query
 
 		if (openid && userinfo) {
-			let UPDATE = `UPDATE user SET userinfo=${userinfo}`
+			let UPDATE = `
+				UPDATE user
+				SET userinfo='${userinfo}'
+				WHERE openid='${openid}'`
 			try {
-				await app.mysql.query(UPDATE)
+				let res = await app.mysql.query(UPDATE)
+				console.log(UPDATE, res)
 			} catch (e) {
-				this.error = true
+				this.error = e
 			}
 			this.render({
 				type: this.error
 					? 'fail'
 					: 'success',
-				data: { openid }
+				message: this.error
+					? this.error
+					: '成功',
+				data: { }
 			})
 
 		} else {

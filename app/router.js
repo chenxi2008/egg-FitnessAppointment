@@ -12,5 +12,7 @@ module.exports = app => {
 
   router.get('/auth', controller.auth.index)
 
-  router.get('/user/update', controller.user.update)
+  router.get('/user/updateUserinfo', controller.user.updateUserinfo)
+  //获取器材列表
+  router.get('/equipment/getEquipmentList', controller.equipment.getEquipmentList)
 };
