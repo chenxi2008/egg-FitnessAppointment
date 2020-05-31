@@ -15,8 +15,7 @@ class AuthController extends BaseController {
 				msg: '请传入正确的js code'
 			})
 		}
-
-		let  {data} = await this.ctx.curl(
+		let { data } = await this.ctx.curl(
 			`https://api.weixin.qq.com/sns/jscode2session`, {
 				data: {
 					appid: appId,
@@ -32,21 +31,17 @@ class AuthController extends BaseController {
 		if (data && data.openid) {
 			let query = `
 				INSERT INTO
-					user (openid) SELECT ('${data.openid}')
+					_user (openid) SELECT ('${data.openid}')
 				FROM DUAL
 				WHERE NOT EXISTS
-					(SELECT openid FROM user WHERE openid='${data.openid}')
+					(SELECT openid FROM _user WHERE openid='${data.openid}')
 			`
 			try {
-				let res = await app.mysql.query(query)
-				console.log(res)
-				// if (res.length == 0) {
-				// 	await app.mysql.query(INSERT)
-				// }
+				await app.mysql.query(query)
 			} catch (e) {
 				this.error = e
-				console.log(e)
 			}
+
 			this.render({
 				type: this.error ?
 					'fail' : 'success',
@@ -61,7 +56,45 @@ class AuthController extends BaseController {
 				message: data.errmsg
 			})
 		}
+	}
+	async flashAccessToken () {
+		let { ctx, config, app } = this
+		let { appId, appSecret } = config
+		let { openid } = ctx.query
+		let { data } = await this.ctx.curl(
+			`https://api.weixin.qq.com/cgi-bin/token`, {
+				data: {
+					appid: appId,
+          secret: appSecret,
+          grant_type: 'client_credential'
+				},
+				method: 'GET',
+				dataType: 'json'
+			}
+		)
+		if (data && data.access_token) {
+			let query = `
+				UPDATE _user SET access_token='${data.access_token}' WHERE openid='${openid}'
+			`
+			try {
+				await app.mysql.query(query)
+			} catch (e) {
+				this.error = e
+			}
+			this.render({
+				type: this.error ?
+					'fail' : 'success',
+				msg: this.error,
+				data: {openid: data.openid}
+			})
 
+		} else {
+			this.render({
+				type: 'fail',
+				code: data.code,
+				msg: '刷新token失效'
+			})
+		}
 	}
 }
 

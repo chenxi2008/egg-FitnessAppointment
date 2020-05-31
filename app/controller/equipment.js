@@ -7,7 +7,7 @@ class EquipmentController extends BaseController {
 		let { ctx, app } = this
 		//取所有的器材类型
 		let SELECT = `
-			SELECT distinct name,timenode FROM equipment
+			SELECT distinct name,timenode FROM _equipment
 		`
 		try {
 			var res = await app.mysql.query(SELECT)

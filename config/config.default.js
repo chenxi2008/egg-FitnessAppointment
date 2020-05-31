@@ -36,6 +36,11 @@ module.exports = appInfo => {
     // 是否加载到 agent 上，默认关闭
     agent: false,
   }
+  config.cors = {
+    origin: '*',
+    allowMethods: 'GET, POST, HEAD, PUT, DELETE, PATH'
+  }
+
   // add your user config here
   const userConfig = {
     myAppName: 'egg',
@@ -45,9 +50,12 @@ module.exports = appInfo => {
     appId: 'wx8e0d851bfe5a234c',
     appSecret: 'd593b0dda02e92df7213b86cf14088da'
   }
-
+  const j_util = {
+    seatNum: 40
+  }
   return {
     ...config,
+    ...j_util,
     ...userConfig,
     ...miniProgram
   };
