@@ -21,4 +21,5 @@ module.exports = app => {
 
   router.get('/order/changeState', controller.order.changeState)
   router.get('/order/getOrderList', controller.order.getOrderList)
+  router.get('/order/getOrderById', controller.order.getOrderById)
 };

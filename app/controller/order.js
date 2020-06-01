@@ -109,10 +109,31 @@ class OrderController extends BaseController {
 		} catch (e) {
 			err = e
 		} finally {
-
+			this.render({
+				type: err ? 'err' : 'success',
+				msg: err ? JSON.stringify(er) : '',
+			})
 		}
-
-
+	}
+	async getOrderById() {
+		let {ctx, app} = this
+		let {id} = ctx.query
+		let res, err;
+		let QUERY = `
+			SELECT * FROM _order
+			WHERE _order.id = ${id}
+		`
+		try {
+			res = await app.mysql.query(QUERY)
+		} catch (e) {
+			err = e
+		} finally {
+			this.render({
+				type: err ? 'fail' : 'success',
+				msg: err ? JSON.stringify(err) : '',
+				data: err ? {} : res
+			})
+		}
 	}
 }
 
