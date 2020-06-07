@@ -7,7 +7,10 @@ class EquipmentController extends BaseController {
 		let { ctx, app } = this
 		//取所有的器材类型
 		let SELECT = `
-			SELECT distinct name,timenode FROM _equipment
+			SELECT 
+				distinct name,
+				timenode 
+			FROM _equipment
 		`
 		try {
 			var res = await app.mysql.query(SELECT)
@@ -18,7 +21,7 @@ class EquipmentController extends BaseController {
 			type: this.error ?
 				'fail' : 'success',
 			msg: this.error ?
-				this.error: '',
+				this.error : '',
 			data: res
 		})
 

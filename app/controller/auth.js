@@ -15,23 +15,25 @@ class AuthController extends BaseController {
 				msg: '请传入正确的js code'
 			})
 		}
-		let { data } = await this.ctx.curl(
-			`https://api.weixin.qq.com/sns/jscode2session`, {
+		try {
+			let { data } = await this.ctx.curl(
+				`https://api.weixin.qq.com/sns/jscode2session`, {
 				data: {
 					appid: appId,
-          secret: appSecret,
-          js_code: js_code,
-          grant_type: 'authorization_code'
+					secret: appSecret,
+					js_code: js_code,
+					grant_type: 'authorization_code'
 				},
 				method: 'GET',
 				dataType: 'json'
-			}
-		)
-
+			})
+		} catch (e) { }
+		
 		if (data && data.openid) {
 			let query = `
 				INSERT INTO
-					_user (openid) SELECT ('${data.openid}')
+					_user (openid) 
+				SELECT ('${data.openid}')
 				FROM DUAL
 				WHERE NOT EXISTS
 					(SELECT openid FROM _user WHERE openid='${data.openid}')
@@ -40,15 +42,14 @@ class AuthController extends BaseController {
 				await app.mysql.query(query)
 			} catch (e) {
 				this.error = e
+			} finally {
+				this.render({
+					type: this.error ?
+						'fail' : 'success',
+					msg: this.error,
+					data: { openid: data.openid }
+				})
 			}
-
-			this.render({
-				type: this.error ?
-					'fail' : 'success',
-				msg: this.error,
-				data: {openid: data.openid}
-			})
-
 		} else {
 			this.render({
 				type: 'fail',
@@ -57,36 +58,42 @@ class AuthController extends BaseController {
 			})
 		}
 	}
-	async flashAccessToken () {
+	async flashAccessToken() {
 		let { ctx, config, app } = this
 		let { appId, appSecret } = config
 		let { openid } = ctx.query
 		let { data } = await this.ctx.curl(
 			`https://api.weixin.qq.com/cgi-bin/token`, {
-				data: {
-					appid: appId,
-          secret: appSecret,
-          grant_type: 'client_credential'
-				},
-				method: 'GET',
-				dataType: 'json'
-			}
+			data: {
+				appid: appId,
+				secret: appSecret,
+				grant_type: 'client_credential'
+			},
+			method: 'GET',
+			dataType: 'json'
+		}
 		)
 		if (data && data.access_token) {
 			let query = `
-				UPDATE _user SET access_token='${data.access_token}' WHERE openid='${openid}'
+				UPDATE 
+					_user 
+				SET 
+					access_token='${data.access_token}' 
+				WHERE 
+					openid='${openid}'
 			`
 			try {
 				await app.mysql.query(query)
 			} catch (e) {
 				this.error = e
+			} finally {
+				this.render({
+					type: this.error ?
+						'fail' : 'success',
+					msg: this.error,
+					data: { openid: data.openid }
+				})
 			}
-			this.render({
-				type: this.error ?
-					'fail' : 'success',
-				msg: this.error,
-				data: {openid: data.openid}
-			})
 
 		} else {
 			this.render({

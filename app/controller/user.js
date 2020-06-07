@@ -4,7 +4,7 @@ const BaseController = require('./base');
 class UserController extends BaseController {
 	async login() {
 		let { ctx, app } = this
-		let {username, password} = ctx.query
+		let { username, password } = ctx.query
 		let err, res;
 		if (!username || !password) {
 			this.render({
@@ -13,8 +13,13 @@ class UserController extends BaseController {
 			})
 		} else {
 			let QUERY = `
-				SELECT * FROM _account
-				WHERE _account.username='${username}' AND _account.password='${password}'
+				SELECT * 
+				FROM 
+					_account
+				WHERE 
+					_account.username='${username}' 
+				AND 
+					_account.password='${password}'
 			`
 			try {
 				res = await app.mysql.query(QUERY)
@@ -64,15 +69,21 @@ class UserController extends BaseController {
 					mobile='${otherinfo.mobile}',
 					jobnumber='${otherinfo.jobnumber}',
 					department='${otherinfo.department}'
-				WHERE openid='${openid}'`
+				WHERE 
+					openid='${openid}'`
 			/***
 				查询当前用户今天是否有数据
 				查询当前活动选择的时间段没有预约的id  预约满了就提示
 				插入数据
 			**/
 			let step1 = `
-				SELECT * FROM _order
-				WHERE openid = '${openid}' AND createtime = '${nowtime}'
+				SELECT * 
+				FROM 
+					_order
+				WHERE 
+					openid = '${openid}' 
+				AND 
+					createtime = '${nowtime}'
 			`
 			//获取当前已存
 			let step2 = `
@@ -95,7 +106,14 @@ class UserController extends BaseController {
 			`
 			let INSERT = (equipmentid) => {
 				return `INSERT INTO
-					_order(state,openid,equipmentname,equipmentid,createtime,begintime)
+					_order(
+						state,
+						openid,
+						equipmentname,
+						equipmentid,
+						createtime,
+						begintime
+					)
 				VALUES
 					('padding','${openid}','${equipment}','${equipmentid}','${nowtime}','${time}')
 				`
@@ -142,11 +160,11 @@ class UserController extends BaseController {
 					}
 				}
 			} else {
-			//其他预约
+				//其他预约
 				if (step2.length) {
 					//当前
 					let have = step2.map(item => item.id)
-					var d = temp.filter(function(v){ return !~have.indexOf(v)})[0]
+					var d = temp.filter(function (v) { return !~have.indexOf(v) })[0]
 
 					if (d) {
 						let err = null
@@ -190,20 +208,28 @@ class UserController extends BaseController {
 		}
 	}
 	async getOrderList() {
-		let {ctx, app} = this
-		let {openid} = ctx.query
+		let { ctx, app } = this
+		let { openid } = ctx.query
 		let err = null
 		let QUERY = `
 			SELECT
-				b.id,
-				a.state,a.begintime,
-				a.createtime,a.equipmentid,
-				a.equipmentname,b.type
-			FROM _order a
-			LEFT JOIN _equipment b
-			ON a.equipmentid = b.id
-			WHERE a.openid='${openid}'
-			ORDER BY a.createtime DESC
+				a.id,
+				a.state,
+				a.begintime,
+				a.createtime,
+				a.equipmentid,
+				a.equipmentname,
+				b.type
+			FROM 
+				_order a
+			LEFT JOIN 
+				_equipment b
+			ON 
+				a.equipmentid = b.id
+			WHERE 
+				a.openid='${openid}'
+			ORDER BY 
+				a.createtime DESC
 		`
 		try {
 			var res = await app.mysql.query(QUERY)
