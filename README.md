@@ -1,4 +1,5 @@
-# FitnessAppointment
+# 基于node.js的egg.js项目
+## 有好多功能，微信小程序后台项目，自己看吧
 
 
 
